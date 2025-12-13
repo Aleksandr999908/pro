@@ -1,0 +1,62 @@
+# Быстрая конфигурация для тестирования (5 эпох)
+model:
+  name: "fox_wolf_classifier"
+  architecture: "mobilenetv3_large_100"  # Более легкая модель
+  input_size: 224
+  num_classes: 3  # fox, wolf, unknown
+  pretrained: true
+
+training:
+  batch_size: 16  # Меньший батч для скорости
+  num_epochs: 5  # Только 5 эпох для теста
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  momentum: 0.9
+  loss: "focal"  # focal, arcface, crossentropy
+
+  # Focal Loss параметры
+  focal_alpha: 0.25
+  focal_gamma: 2.0
+
+  # ArcFace параметры
+  arcface_m: 0.5
+  arcface_s: 64.0
+
+data:
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+  roi_padding: 0.15  # 15% паддинг вокруг ROI
+  augmentations:
+    day:
+      - "horizontal_flip"
+      - "color_jitter"
+      - "random_crop"
+    night:
+      - "horizontal_flip"
+      - "clahe"
+      - "random_crop"
+
+validation:
+  metrics: ["f1", "balanced_accuracy", "auroc"]
+  min_f1: 0.92
+  calibration: false  # Без калибровки для скорости
+
+inference:
+  confidence_threshold: 0.7
+  class_gap_threshold: 0.2
+  temporal_window: 5
+  temporal_method: "majority_vote"
+
+export:
+  format: "onnx"
+  opset_version: 11
+  optimize: true
+
+deployment:
+  batch_size: 8
+  tta: false
+  device: "cpu"
+  models:
+    day: "models/fgc_day.onnx"
+    night: "models/fgc_night.onnx"

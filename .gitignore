@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Данные
+data/videos/
+data/frames/
+data/roi/
+data/keypoints/
+*.jpg
+*.png
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Модели
+models/checkpoints/
+models/*.pth
+models/*.pt
+models/*.onnx
+*.onnx
+
+# Логи
+*.log
+logs/
+tensorboard/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ОС
+.DS_Store
+Thumbs.db
+
+# Временные файлы
+*.tmp
+*.bak
+*.swp
+TZ_*.txt
+*.txt.bak
+
+# Docker
+.dockerignore

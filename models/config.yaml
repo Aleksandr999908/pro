@@ -1,0 +1,62 @@
+# Конфигурация для классификатора "Лиса vs Волк"
+model:
+  name: "fox_wolf_classifier"
+  architecture: "efficientnetv2_rw_s"  # или "mobilenetv3_large_100"
+  input_size: 224
+  num_classes: 3  # fox, wolf, unknown
+  pretrained: true
+
+training:
+  batch_size: 32
+  num_epochs: 50
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  momentum: 0.9
+  loss: "focal"  # focal, arcface, crossentropy
+
+  # Focal Loss параметры
+  focal_alpha: 0.25
+  focal_gamma: 2.0
+
+  # ArcFace параметры
+  arcface_m: 0.5
+  arcface_s: 64.0
+
+data:
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+  roi_padding: 0.15  # 15% паддинг вокруг ROI
+  augmentations:
+    day:
+      - "horizontal_flip"
+      - "color_jitter"
+      - "random_crop"
+    night:
+      - "horizontal_flip"
+      - "clahe"  # CLAHE для ИК-пересвета
+      - "random_crop"
+
+validation:
+  metrics: ["f1", "balanced_accuracy", "auroc"]
+  min_f1: 0.92  # Минимальный F1 для каждого класса
+  calibration: true  # Temperature scaling
+
+inference:
+  confidence_threshold: 0.7
+  class_gap_threshold: 0.2  # δ - минимальный зазор между классами
+  temporal_window: 5  # Размер окна для временной агрегации
+  temporal_method: "majority_vote"  # majority_vote, median, temporal_pooling
+
+export:
+  format: "onnx"
+  opset_version: 11
+  optimize: true
+
+deployment:
+  batch_size: 8
+  tta: false  # Test Time Augmentation (минимальная для производительности)
+  device: "cpu"  # cpu, cuda
+  models:
+    day: "models/fgc_day.onnx"
+    night: "models/fgc_night.onnx"
