@@ -14,7 +14,7 @@ def export_to_onnx(model_path, config_path, output_path, input_size=224):
     """Экспортирует PyTorch модель в ONNX"""
 
     # Загружаем конфигурацию
-    with open(config_path, 'r') as f:
+    with open(config_path, 'r',encoding='utf-8') as f:
         config = yaml.safe_load(f)
 
     # Загружаем модель
